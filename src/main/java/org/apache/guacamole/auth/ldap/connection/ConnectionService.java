@@ -228,14 +228,14 @@ public class ConnectionService {
 
             RandomStringGenerator passwordGenerator = new RandomStringGenerator.Builder().withinRange('0','z').get();
 
-            Map<String, Integer> maxVmids = new HashMap<>();
+            int maxVmid = 0;
             List<PveClusterResources> vms = proxmox.getCluster().getResources("vm").execute();
             for (PveClusterResources vm : vms) {
                 ArrayList<String> vmTags = new ArrayList<>(Arrays.asList(vm.getTags().split(";")));
                 String vmName = vm.getName();
                 String vmNode = vm.getNode();
                 int vmid = vm.getVmid();
-                maxVmids.put(vmNode, maxVmids.getOrDefault(vmNode, 0)+1);
+                maxVmid = Math.max(vmid, maxVmid);
 
                 boolean goldenImage = vmTags.contains(LDAP_PROXMOX_GOLDEN_TAG);
                 boolean inUserConns = userNameToConn.containsKey(username + "-" + vmName);
@@ -279,7 +279,7 @@ public class ConnectionService {
                 
                 // Clone with new name 
                 String vmName = entry.getKey();
-                int vmid = maxVmids.put(node, maxVmids.get(node) + 1);
+                int vmid = ++maxVmid;
                 PveQemuCloneOptions cloneOptions = PveQemuCloneOptions.builder().name(vmName);
                 sourceVm.cloneVm(vmid, cloneOptions).waitForCompletion(proxmox).execute();
                 
