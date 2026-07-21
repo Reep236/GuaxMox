@@ -270,11 +270,6 @@ public class ConnectionService {
 
                     String password = passwordGenerator.generate(32);
                     config.setParameter("password", passwordGenerator.generate(32));
-                    if (vm.getStatus().equals("running")) {
-                        logger.info(String.format("VM %s is running, setting password to %s", vmName, password));
-                        PveQemuVm qvm = proxmox.getNodes().get(vmNode).getQemu().get(vmid); 
-                        qvm.monitor(String.format("set_password vnc empty -d vnc2", password)).execute();
-                    }
                     
                     GuacamoleProxyConfiguration proxyConfig = LocalEnvironment.getInstance().getDefaultGuacamoleProxyConfiguration();
                     Connection connection = new SimpleConnection(vmName, vmName, proxyConfig, config, true);
@@ -316,9 +311,6 @@ public class ConnectionService {
 
                 String password = passwordGenerator.generate(32);
                 config.setParameter("password", passwordGenerator.generate(32));
-                if (vm.getStatus().execute().getStatus().equals("running")) {
-                    vm.monitor(String.format("set_password vnc %s -d vnc2", password)).execute();
-                }
                 
                 GuacamoleProxyConfiguration proxyConfig = LocalEnvironment.getInstance().getDefaultGuacamoleProxyConfiguration();
                 Connection connection = new SimpleConnection(vmName, vmName, proxyConfig, config, true);
