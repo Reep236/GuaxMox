@@ -320,15 +320,6 @@ public class ConnectionService {
                 userNameToConn.put(vmName, connection);
             }
             
-            GuacamoleConfiguration config = new GuacamoleConfiguration();
-            config.setProtocol("vnc");
-            config.setParameter("hostname", "localhost");
-            config.setParameter("port", "5900");
-            config.setParameter("password", "dummy");
-            GuacamoleProxyConfiguration proxyConfig = LocalEnvironment.getInstance().getDefaultGuacamoleProxyConfiguration();
-            Connection connection = new SimpleConnection("dummy", "dummy", proxyConfig, config, true);
-            connection.setParentIdentifier(LDAPAuthenticationProvider.ROOT_CONNECTION_GROUP);
-            userNameToConn.put("dummy", connection);
             // Return a map of all readable connections
             return userNameToConn;
         }
