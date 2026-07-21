@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.RandomStringGenerator;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -288,8 +289,16 @@ public class ConnectionService {
                 PveQemuCloneOptions cloneOptions = PveQemuCloneOptions.builder().name(vmName);
                 sourceVm.cloneVm(vmid, cloneOptions).waitForCompletion(proxmox).execute();
                 
+                // Derive tags 
+                ArrayList<String> sourceVmTags = new ArrayList<>(Arrays.asList(sourceVmCR.getTags().split(";")));
+                sourceVmTags.retainAll(tags);
+                String vmTags = StringUtils.join(sourceVmTags, ";");
+
                 PveQemuVm vm = proxmox.getNodes().get(node).getQemu().get(vmid);
-                PveQemuConfigUpdateOptions updOptions = PveQemuConfigUpdateOptions.builder().args(String.format("-vnc 0.0.0.0:%d,password=on", vmid));
+                PveQemuConfigUpdateOptions updOptions = PveQemuConfigUpdateOptions
+                    .builder()
+                    .args(String.format("-vnc 0.0.0.0:%d,password=on", vmid))
+                    .tags(vmTags);
                 vm.updateConfig(updOptions).waitForCompletion(proxmox).execute();
 
                 GuacamoleConfiguration config = new GuacamoleConfiguration();
@@ -305,6 +314,7 @@ public class ConnectionService {
                 
                 GuacamoleProxyConfiguration proxyConfig = LocalEnvironment.getInstance().getDefaultGuacamoleProxyConfiguration();
                 Connection connection = new SimpleConnection(vmName, vmName, proxyConfig, config, true);
+                connection.setParentIdentifier(LDAPAuthenticationProvider.ROOT_CONNECTION_GROUP);
 
                 userNameToConn.put(vmName, connection);
             }
