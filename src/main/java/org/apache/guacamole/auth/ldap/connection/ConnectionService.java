@@ -217,7 +217,9 @@ public class ConnectionService {
             List<String> tags = new ArrayList<>();
             Pattern r = Pattern.compile("DL-([^\\-]+)-VMAccess");
             for (Entry e : results) {
-                Matcher m = r.matcher(e.get(LDAP_ATTRIBUTE_NAME_ID).toString());
+                String groupname = e.get(LDAP_ATTRIBUTE_NAME_ID).toString();
+                logger.info(String.format("Found group %s with %s as member", groupname, username));
+                Matcher m = r.matcher(groupname);
                 if (m.find()) {
                     tags.add(m.group(1).toLowerCase());
                 }
@@ -231,15 +233,18 @@ public class ConnectionService {
             int maxVmid = 0;
             List<PveClusterResources> vms = proxmox.getCluster().getResources("vm").execute();
             for (PveClusterResources vm : vms) {
-                ArrayList<String> vmTags = new ArrayList<>(Arrays.asList(vm.getTags().split(";")));
                 String vmName = vm.getName();
                 String vmNode = vm.getNode();
+                String rawTags = vm.getTags();
+                ArrayList<String> vmTags = new ArrayList<>(Arrays.asList(rawTags.split(";")));
+                logger.info(String.format("Found vm %s on node %s with tags %s", vmName, vmNode, rawTags));
                 int vmid = vm.getVmid();
                 maxVmid = Math.max(vmid, maxVmid);
 
                 boolean goldenImage = vmTags.contains(LDAP_PROXMOX_GOLDEN_TAG);
                 boolean inUserConns = userNameToConn.containsKey(username + "-" + vmName);
                 boolean inGoldVMIDs = goldenNameToVMID.containsKey(vmName);
+                boolean hasUsername = vmName.contains(username);
 
                 vmTags.retainAll(tags);
                 
@@ -247,7 +252,7 @@ public class ConnectionService {
                     ;
                 } else if (goldenImage) {
                     goldenNameToVMID.put(username + "-" + vmName, vm);
-                } else {
+                } else if (hasUsername) {
                     if (inGoldVMIDs) {
                         goldenNameToVMID.remove(vmName);
                     }
