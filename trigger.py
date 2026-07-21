@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /opt/guacamole/.venv/bin/python3
 from proxmoxer import ProxmoxAPI
 from os   import getenv
 from time import sleep
