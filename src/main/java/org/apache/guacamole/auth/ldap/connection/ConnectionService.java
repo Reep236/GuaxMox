@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -229,7 +230,11 @@ public class ConnectionService {
             Map<String,PveClusterResources> goldenNameToVMID = new HashMap<>();
             Map<String,Connection> userNameToConn = new HashMap<>();
 
-            RandomStringGenerator passwordGenerator = new RandomStringGenerator.Builder().withinRange('0','z').get();
+            RandomStringGenerator passwordGenerator = new RandomStringGenerator
+                .Builder()
+                .withinRange('0','z')
+                .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
+                .get();
 
             int maxVmid = 0;
             List<PveClusterResources> vms = proxmox.getCluster().getResources("vm").execute();
@@ -310,7 +315,7 @@ public class ConnectionService {
 
                 String password = passwordGenerator.generate(32);
                 config.setParameter("password", passwordGenerator.generate(32));
-                if (vm.getStatus().equals("running")) {
+                if (vm.getStatus().execute().getStatus().equals("running")) {
                     vm.monitor(String.format("set_password vnc %s -d vnc2", password)).execute();
                 }
                 
