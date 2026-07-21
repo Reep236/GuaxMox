@@ -272,7 +272,9 @@ public class ConnectionService {
                     
                     GuacamoleProxyConfiguration proxyConfig = LocalEnvironment.getInstance().getDefaultGuacamoleProxyConfiguration();
                     Connection connection = new SimpleConnection(vmName, vmName, proxyConfig, config, true);
+                    connection.setParentIdentifier(LDAPAuthenticationProvider.ROOT_CONNECTION_GROUP);
 
+                    logger.info(String.format("Adding connection %s to user %s", vmName, username));
                     userNameToConn.put(vmName, connection);
                 }
             }
@@ -315,7 +317,8 @@ public class ConnectionService {
                 GuacamoleProxyConfiguration proxyConfig = LocalEnvironment.getInstance().getDefaultGuacamoleProxyConfiguration();
                 Connection connection = new SimpleConnection(vmName, vmName, proxyConfig, config, true);
                 connection.setParentIdentifier(LDAPAuthenticationProvider.ROOT_CONNECTION_GROUP);
-
+                
+                logger.info(String.format("Adding connection %s to user %s", vmName, username));
                 userNameToConn.put(vmName, connection);
             }
             
