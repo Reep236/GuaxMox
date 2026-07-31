@@ -242,7 +242,12 @@ public class ConnectionService {
                 String vmName = vm.getName();
                 String vmNode = vm.getNode();
                 String rawTags = vm.getTags();
-                ArrayList<String> vmTags = new ArrayList<>(Arrays.asList(rawTags.split(";")));
+                
+                ArrayList<String> vmTags 
+                    = rawTags.isEmpty() 
+                    ? (new ArrayList<>())
+                    : (new ArrayList<>(Arrays.asList(rawTags.split(";"))));
+                
                 logger.info(String.format("Found vm %s on node %s with tags %s", vmName, vmNode, rawTags));
                 int vmid = vm.getVmid();
                 maxVmid = Math.max(vmid, maxVmid);

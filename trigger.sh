@@ -1,3 +1,3 @@
 #! /usr/bin/env bash
 source /home/guacamole/.venv/bin/activate
-/etc/guacamole/trigger.py ${@:1}
+/etc/guacamole/trigger.py ${@:1} >& /dev/null
