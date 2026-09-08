@@ -376,6 +376,7 @@ public class ConnectionService {
         // Additionally filter by group membership if the current user is a
         // member of any user groups
         List<Entry> userGroups = userGroupService.getParentUserGroupEntries(config, userDN);
+        logger.info("Checking groups for user");
         for (Entry entry : userGroups) {
             try { 
                 logger.info(String.format("Found group DN %s with user %s as member", userDN.toString(), entry.getDn().toString()));
@@ -384,6 +385,7 @@ public class ConnectionService {
                 ;
             }
         }
+        logger.info("Finished checking groups for user");
         
 
 
