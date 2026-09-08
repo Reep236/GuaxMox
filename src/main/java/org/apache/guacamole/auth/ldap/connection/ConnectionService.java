@@ -376,11 +376,12 @@ public class ConnectionService {
         // Additionally filter by group membership if the current user is a
         // member of any user groups
         List<Entry> userGroups = userGroupService.getParentUserGroupEntries(config, userDN);
-        if (!userGroups.isEmpty()) {
-            userGroups.forEach(entry ->
-                groupFilter.addNode(new EqualityNode(LDAP_ATTRIBUTE_NAME_GROUPS,entry.getDn().toString()))
-            );
+        for (Entry entry : userGroups) {
+            logger.info(String.format("Found group DN %s with user %s as member", userDN.toString(), entry.getDn().toString()));
+            groupFilter.addNode(new EqualityNode(LDAP_ATTRIBUTE_NAME_GROUPS,entry.getDn().toString()));
         }
+        
+
 
         // Complete the search filter.
         searchFilter.addNode(groupFilter);
