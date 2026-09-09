@@ -381,12 +381,8 @@ public class ConnectionService {
         List<Entry> userGroups = userGroupService.getParentUserGroupEntries(config, userDN);
         logger.info("Checking groups for user");
         for (Entry entry : userGroups) {
-            try { 
-                logger.info(String.format("Found group DN %s with user %s as member", userDN.toString(), entry.getDn().toString()));
-                groupFilter.addNode(new EqualityNode(LDAP_ATTRIBUTE_NAME_GROUPS,entry.getDn().toString()));
-            } catch (Exception e) {
-                ;
-            }
+            logger.info(String.format("Found group DN %s with user %s as member", userDN.toString(), entry.getDn().toString()));
+            groupFilter.addNode(new EqualityNode(LDAP_ATTRIBUTE_NAME_GROUPS,entry.getDn().toString()));
         }
         logger.info("Finished checking groups for user");
         
