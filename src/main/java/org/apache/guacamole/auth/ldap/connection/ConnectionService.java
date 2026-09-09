@@ -199,6 +199,7 @@ public class ConnectionService {
                     ldapConfig.getProxmoxPassword(), 
                     "pam", 
                     SecurityConfig.insecure());
+            logger.info("Successfully authenticated to ProxMox");
 
             // Get the search filter for finding connections accessible by the
             // current user
@@ -212,12 +213,14 @@ public class ConnectionService {
             // looking for direct membership in the guacConfigGroup
             // and possibly any groups the user is a member of that are
             // referred to in the seeAlso attribute of the guacConfigGroup.
+            logger.info("Querying LDAP for valid connections");
             List<Entry> results = queryService.search(ldapConfig, ldapConfig.getLDAPConnection(),
                     configurationBaseDN, connectionSearchFilter, 0, GUAC_CONFIG_LDAP_ATTRIBUTES);
 
             
             List<String> tags = new ArrayList<>();
             Pattern r = Pattern.compile("DL-([^\\-]+)-VMAccess");
+            logger.info("Checking for valid groups");
             for (Entry e : results) {
                 String groupname = e.get(LDAP_ATTRIBUTE_NAME_ID).toString();
                 logger.info(String.format("Found group %s with %s as member", groupname, username));
