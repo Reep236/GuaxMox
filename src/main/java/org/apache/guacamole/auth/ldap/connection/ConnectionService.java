@@ -129,7 +129,7 @@ public class ConnectionService {
      * The attribute name that uniquely identifies a Guacamole connection object
      * in LDAP.
      */
-    public static final String LDAP_ATTRIBUTE_NAME_ID = "cn";
+    public static final String LDAP_ATTRIBUTE_NAME_ID = "name";
     
     /**
      * The LDAP attribute name where the Guacamole connection protocol is stored.
@@ -219,15 +219,11 @@ public class ConnectionService {
             List<String> tags = new ArrayList<>();
             Pattern r = Pattern.compile("DL-([^\\-]+)-VMAccess");
             for (Entry e : results) {
-                try {
-                    String groupname = e.get(LDAP_ATTRIBUTE_NAME_ID).toString();
-                    logger.info(String.format("Found group %s with %s as member", groupname, username));
-                    Matcher m = r.matcher(groupname);
-                    if (m.find()) {
-                        tags.add(m.group(1).toLowerCase());
-                    }
-                } catch (Exception ex) {
-                    ;
+                String groupname = e.get(LDAP_ATTRIBUTE_NAME_ID).toString();
+                logger.info(String.format("Found group %s with %s as member", groupname, username));
+                Matcher m = r.matcher(groupname);
+                if (m.find()) {
+                    tags.add(m.group(1).toLowerCase());
                 }
             }
             
