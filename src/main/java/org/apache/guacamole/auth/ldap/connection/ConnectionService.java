@@ -223,7 +223,7 @@ public class ConnectionService {
             logger.info("Checking for valid groups");
             for (Entry e : results) {
                 String groupname = e.get(LDAP_ATTRIBUTE_NAME_ID).toString();
-                logger.info(String.format("Found group %s with %s as member", groupname, username));
+                logger.debug(String.format("Found group %s with %s as member", groupname, username));
                 Matcher m = r.matcher(groupname);
                 if (m.find()) {
                     tags.add(m.group(1).toLowerCase());
@@ -251,7 +251,7 @@ public class ConnectionService {
                     ? (new ArrayList<>())
                     : (new ArrayList<>(Arrays.asList(rawTags.split(";"))));
                 
-                logger.info(String.format("Found vm %s on node %s with tags %s", vmName, vmNode, rawTags));
+                logger.debug(String.format("Found vm %s on node %s with tags %s", vmName, vmNode, rawTags));
                 int vmid = vm.getVmid();
                 maxVmid = Math.max(vmid, maxVmid);
 
@@ -381,7 +381,7 @@ public class ConnectionService {
         List<Entry> userGroups = userGroupService.getParentUserGroupEntries(config, userDN);
         logger.info("Checking groups for user");
         for (Entry entry : userGroups) {
-            logger.info(String.format("Found group DN %s with user %s as member", userDN.toString(), entry.getDn().toString()));
+            logger.debug(String.format("Found group DN %s with user %s as member", userDN.toString(), entry.getDn().toString()));
             groupFilter.addNode(new EqualityNode(LDAP_ATTRIBUTE_NAME_GROUPS,entry.getDn().toString()));
         }
         logger.info("Finished checking groups for user");
