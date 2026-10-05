@@ -246,6 +246,11 @@ public class ConnectionService {
                 String vmNode = vm.getNode();
                 String rawTags = vm.getTags();
                 
+                if (vmName == null || vmNode == null || rawTags == null) {
+                    logger.warn(String.format("PVE returned BAD-STATE VM %s on node %s with tags %s", vmName, vmNode, rawTags));
+                    continue;
+                }
+
                 ArrayList<String> vmTags 
                     = rawTags.isEmpty() 
                     ? (new ArrayList<>())
