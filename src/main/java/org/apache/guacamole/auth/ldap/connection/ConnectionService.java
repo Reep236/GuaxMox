@@ -263,7 +263,7 @@ public class ConnectionService {
                 boolean goldenImage = vmTags.contains(LDAP_PROXMOX_GOLDEN_TAG);
                 boolean inUserConns = userNameToConn.containsKey(username + "-" + vmName);
                 boolean inGoldVMIDs = goldenNameToVMID.containsKey(vmName);
-                boolean hasUsername = vmName.contains(username);
+                boolean hasUsername = vmName.contains(username + "-");
 
                 vmTags.retainAll(tags);
                 
